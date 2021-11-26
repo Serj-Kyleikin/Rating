@@ -76,7 +76,7 @@ class Application extends AjaxModel {
 
         $getRating = explode('-', $this->pInfo['rating']);              // Парсинг рейтинга поста вида: рейтинг-проголосовавших
 
-        $search = '#(^' . $this->pInfo['id'] . '-.,|,' . $this->pInfo['id'] . '-.)#';         // Шаблон поиска в БД users
+        $search = '#(^' . $this->pInfo['id'] . '-.,|,' . $this->pInfo['id'] . '-.)#';
 
         if(preg_match($search, $this->uInfo['vote'], $identity)) {     // Если у пользователя в БД есть голос за этот пост
 
