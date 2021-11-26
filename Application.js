@@ -8,7 +8,7 @@ $(document).ready(function() {
 
 /*************************** Рейтинг ***************************/
 
-	let targets = document.querySelectorAll('.vote');      // Загрузка данных рейтинга
+	let targets = document.querySelectorAll('.vote');      // Получение колллекции рейтингов
 
 	// Получение рейтинга постов 
 
