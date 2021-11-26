@@ -7,7 +7,7 @@ class Application extends AjaxModel {
     
     // Получение данных авторизовнного пользователя
     
-    function getuInfo() {
+    function getUserInfo() {
 
         // Получение имени голосующего пользователя по данным, хранящимся в куки
 
@@ -22,7 +22,7 @@ class Application extends AjaxModel {
     
     // Получение среднего рейтинга поста и списка проголосовавших userId за пост из данных, хранящихся в URI изображения этого поста
     
-    function getpInfo() {
+    function getPostInfo() {
 
         $prepare['name'] = explode('/', $_POST['URI'])[4];             // Имя владельца каталога с изображениями
         $prepare['postId'] = explode('/', $_POST['URI'])[6];      // Имя папки поста, совпадающее с id поста, хранящегося в БД
@@ -37,13 +37,13 @@ class Application extends AjaxModel {
 	public function showRating() {
 
         $data = 'DB';
-        $this->getpInfo();             // Запрос рейтинга поста
+        $this->getPostInfo();             // Запрос рейтинга поста
 
         // Если это авторизованный пользователь, то показ его оценок
 
         if(isset($_COOKIE['name'])) {
 
-            $this->getuInfo();        // Запрос данных авторизованного пользователя
+            $this->getUserInfo();        // Запрос данных авторизованного пользователя
 
             // Данные хранятся в виде: postId-оценка,postId-оценка,postId-оценка
 
@@ -71,8 +71,8 @@ class Application extends AjaxModel {
 
     public function changeRating() {
 
-        $this->getuInfo();             // Запрос данных авторизованного пользователя
-        $this->getpInfo();             // Запрос рейтинга поста
+        $this->getUserInfo();             // Запрос данных авторизованного пользователя
+        $this->getPostInfo();             // Запрос рейтинга поста
 
         $getRating = explode('-', $this->pInfo['rating']);              // Парсинг рейтинга поста вида: рейтинг-проголосовавших
 
