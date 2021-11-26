@@ -57,7 +57,7 @@ class Application extends AjaxModel {
         echo $this->pInfo['rating'] . '+' . $data;
 	}
 
-    // Единая точка входа для проверки действий авторизованного пользователя
+    // Фасад, обрабатывающий действия пользователя, требующие проверки безопасности
 
     public function checkVoter() {
         
