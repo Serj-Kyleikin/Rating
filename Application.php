@@ -25,7 +25,7 @@ class Application extends AjaxModel {
     function getPostInfo() {
 
         $prepare['name'] = explode('/', $_POST['URI'])[4];             // Имя владельца каталога с изображениями
-        $prepare['postId'] = explode('/', $_POST['URI'])[6];      // Имя папки поста, совпадающее с id поста, хранящегося в БД
+        $prepare['postId'] = explode('/', $_POST['URI'])[6];           // Имя папки поста, совпадающее с id поста, хранящегося в БД
 
         $getVoters = $this->connection->prepare("SELECT id, rating, voters FROM articles WHERE `name` = :name and `postId` = :postId");
         $getVoters->execute($prepare);
