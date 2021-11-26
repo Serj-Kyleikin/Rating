@@ -88,9 +88,9 @@ class Application extends AjaxModel {
 
                 // Изменения в articles
 
-                $prepare['rating'] = ($getRating[0] - $_POST['vote']) . '-' . ($getRating[1] - 1);
+                $articlesData['rating'] = ($getRating[0] - $_POST['vote']) . '-' . ($getRating[1] - 1);
 
-                $prepare['voters'] = preg_replace_callback('#(^' . $this->uInfo['id'] . ',|,' . $this->uInfo['id'] . ',)#', 
+                $articlesData['voters'] = preg_replace_callback('#(^' . $this->uInfo['id'] . ',|,' . $this->uInfo['id'] . ',)#', 
                     function($match) {
                         if(preg_match('#^,#', $match[0])) return ',';       // В остальных случаях
                         else return '';                                     // Если это первая запись в БД
@@ -98,60 +98,60 @@ class Application extends AjaxModel {
 
                 // Изменение в users
 
-                $data['vote'] = preg_replace($search, '', $this->uInfo['vote']);
+                $userData['vote'] = preg_replace($search, '', $this->uInfo['vote']);
 
-                $show = $prepare['rating'] . '+delete';                     // Подготовка данных для JS
+                $show = $articlesData['rating'] . '+delete';                     // Подготовка данных для JS
  
             } else {        // Изменение оценки
 
                 // Изменения в articles
   
-                $prepare['rating'] = ($getRating[0] - $getVote[1]) + $_POST['vote'] . '-' . $getRating[1];
-                $prepare['voters'] = $this->pInfo['voters'];         // Количество прголосовавших - без изменений
+                $articlesData['rating'] = ($getRating[0] - $getVote[1]) + $_POST['vote'] . '-' . $getRating[1];
+                $articlesData['voters'] = $this->pInfo['voters'];         // Количество прголосовавших - без изменений
 
                 // Изменение в users
 
-                $data['vote'] = preg_replace_callback($search, 
+                $userData['vote'] = preg_replace_callback($search, 
                     function($match) {
                         if(preg_match('#^,#', $match[0])) return $value = ',' . $this->pInfo['id'] . '-' . $_POST['vote'];
                         else return $value = $this->pInfo['id'] . '-' . $_POST['vote'] . ',';
                     }, $this->uInfo['vote']);
 
-                $show = $prepare['rating'] . '+' . $_POST['vote'];      // Данные вида: рейтинг-проголосовавших+ваша оценка
+                $show = $articlesData['rating'] . '+' . $_POST['vote'];      // Данные вида: рейтинг-проголосовавших+ваша оценка
             }
 
         } else {        // Если это голосование без совпадений в БД
 
-            $prepare['rating'] = ($getRating[0] + $_POST['vote']) . '-' . ($getRating[1] + 1);
+            $articlesData['rating'] = ($getRating[0] + $_POST['vote']) . '-' . ($getRating[1] + 1);
 
             // Внесение id в список проголосовавших конкретного поста
 
-            if($this->pInfo['voters'] == '') $prepare['voters'] = $this->uInfo['id'] . ',';     // Если БД пуста
-            else $prepare['voters'] = $this->pInfo['voters'] . $this->uInfo['id'] . ',';        // Конкатенация
+            if($this->pInfo['voters'] == '') $articlesData['voters'] = $this->uInfo['id'] . ',';     // Если БД пуста
+            else $articlesData['voters'] = $this->pInfo['voters'] . $this->uInfo['id'] . ',';        // Конкатенация
 
             // Внесение записи postId-оценка голосующего пользователя
 
-            if($this->uInfo['vote'] == '') $data['vote'] = $this->pInfo['id'] . '-' . $_POST['vote'] . ',';
-            else $data['vote'] = $this->uInfo['vote'] . $this->pInfo['id'] . '-' . $_POST['vote'] . ',';
+            if($this->uInfo['vote'] == '') $userData['vote'] = $this->pInfo['id'] . '-' . $_POST['vote'] . ',';
+            else $userData['vote'] = $this->uInfo['vote'] . $this->pInfo['id'] . '-' . $_POST['vote'] . ',';
 
-            $show = $prepare['rating'] . '+' . $_POST['vote'];      // Данные вида: рейтинг-проголосовавших+ваша оценка
+            $show = $articlesData['rating'] . '+' . $_POST['vote'];      // Данные вида: рейтинг-проголосовавших+ваша оценка
         }
 
         // Внесение данных в articles
 
-        $prepare['name'] = explode('/', $_POST['URI'])[4];            // Имя владельца каталога с изображениями
-        $prepare['postId'] = explode('/', $_POST['URI'])[6];     // Имя папки поста, совпадающее с id поста, хранящегося в БД
+        $articlesData['name'] = explode('/', $_POST['URI'])[4];            // Имя владельца каталога с изображениями
+        $articlesData['postId'] = explode('/', $_POST['URI'])[6];     // Имя папки поста, совпадающее с id поста, хранящегося в БД
 
         $updateArticles = $this->connection->prepare("UPDATE `articles` SET rating=:rating, voters=:voters WHERE name = :name and postId = :postId");
-        $updateArticles->execute($prepare);
+        $updateArticles->execute($articlesData);
 
         // Внесение данных в users
 
-        $data['id'] = $this->uInfo['id'];
+        $userData['id'] = $this->uInfo['id'];
 
         $addNewVote = $this->connection->prepare("UPDATE `users` SET vote=:vote WHERE id = :id");
         
-        $addNewVote->execute($data);
+        $addNewVote->execute($userData);
 
         echo $show;                     // Показ обновлённых дагнных рейтинга
     }
