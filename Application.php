@@ -47,7 +47,7 @@ class Application extends AjaxModel {
 
             // Данные хранятся в виде: postId-оценка,postId-оценка,postId-оценка
 
-            $search = '#^' . $this->pInfo['id'] . '-.|,' . $this->pInfo['id'] . '-.#';
+            $search = '#(^' . $this->pInfo['id'] . '-.|,' . $this->pInfo['id'] . '-.)#';
 
             // Поиск postId среди коллекции постов, за которые пользователь уже голосовал
 
