@@ -57,14 +57,18 @@ class Application extends AjaxModel {
         echo $this->pInfo['rating'] . '+' . $data;
 	}
 
-    // Проверка статуса голосующего
+    // Единая точка входа для проверки действий авторизованного пользователя
 
     public function checkVoter() {
         
-        // Метод содержит сложную проверку пользователя
-        
-        if(isset($_COOKIE['name'])) $this->changeRating(); 
-        else echo 'unregistered';
+	// Метод содержит не описанную здесь, более сложную проверку пользователя 
+	    
+        if(isset($_COOKIE['userName'])) {
+            $method = $_POST['method'];
+            $this->$method(); 
+        } else {
+            echo 'unregistered';
+        }
     }
 
     // Внесение изменение в БД.
