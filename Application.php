@@ -105,17 +105,17 @@ class Application extends AjaxModel {
             } else {        // Изменение оценки
 
                 // Изменения в articles
-                
+  
                 $prepare['rating'] = ($getRating[0] - $getVote[1]) + $_POST['vote'] . '-' . $getRating[1];
                 $prepare['voters'] = $this->pInfo['voters'];         // Количество прголосовавших - без изменений
 
                 // Изменение в users
 
-                $value = $this->pInfo['id'] . '-' . $_POST['vote'] . ',';
-
-                if(preg_match('#^,#', $identity[0])) $value = ',' . $this->pInfo['id'] . '-' . $_POST['vote'];
-
-                $data['vote'] = preg_replace($search, $value, $this->uInfo['vote']);
+                $data['vote'] = preg_replace_callback($search, 
+                    function($match) {
+                        if(preg_match('#^,#', $match[0])) return $value = ',' . $this->pInfo['id'] . '-' . $_POST['vote'];
+                        else return $value = $this->pInfo['id'] . '-' . $_POST['vote'] . ',';
+                    }, $this->uInfo['vote']);
 
                 $show = $prepare['rating'] . '+' . $_POST['vote'];      // Данные вида: рейтинг-проголосовавших+ваша оценка
             }
