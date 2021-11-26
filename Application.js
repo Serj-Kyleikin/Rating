@@ -149,13 +149,13 @@ $(document).ready(function() {
 		}
 
 		target.onclick = function(event) {
-            if(event.target.className != 'vote') checkVoter(target, event.target);      // Добавление рейтинга
+            if(event.target.className != 'vote') addVote(target, event.target);      // Добавление рейтинга
 		}
 	}
 
     // Проверка статуса голосующего
 
-    function checkVoter(target, vote) {
+    function addVote(target, vote) {
 
         let address = vote.parentNode.parentNode.parentNode.parentNode.querySelector('.image').children[0].getAttribute('src');
 
@@ -169,7 +169,8 @@ $(document).ready(function() {
             }
         }
 
-        formData.append('buttonStatus', 'checkVoter');
+        formData.append('buttonStatus', 'checkVoter');		// Запуск метода проверки авторизованного пользователя
+        formData.append('method', 'changeRating');		// Имя метода в случае успеха проверки безопасности
 
         $.ajax({
 
