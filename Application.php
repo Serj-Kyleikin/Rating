@@ -3,7 +3,24 @@
 class Application extends AjaxModel {
     
     protected $uInfo;
-    protected $pInfo;     
+    protected $pInfo;
+	
+    // Фасад, обрабатывающий действия пользователя, требующие проверки безопасности
+
+    public function checkVoter() {
+        
+	// Метод содержит не описанную здесь, более сложную проверку пользователя 
+	    
+        if(isset($_COOKIE['name'])) {
+            $method = $_POST['method'];
+            $this->$method(); 
+        } else {
+            echo 'unregistered';
+        }
+    }
+
+            /*************************** Рейтинг ***************************/
+	
     
     // Получение данных авторизовнного пользователя
     
@@ -57,20 +74,6 @@ class Application extends AjaxModel {
         echo $this->pInfo['rating'] . '+' . $data;
 	}
 
-    // Фасад, обрабатывающий действия пользователя, требующие проверки безопасности
-
-    public function checkVoter() {
-        
-	// Метод содержит не описанную здесь, более сложную проверку пользователя 
-	    
-        if(isset($_COOKIE['userName'])) {
-            $method = $_POST['method'];
-            $this->$method(); 
-        } else {
-            echo 'unregistered';
-        }
-    }
-
     // Внесение изменение в БД.
 
     public function changeRating() {
@@ -96,8 +99,8 @@ class Application extends AjaxModel {
 
                 $articlesData['voters'] = preg_replace_callback('#(^' . $this->uInfo['id'] . ',|,' . $this->uInfo['id'] . ',)#', 
                     function($match) {
-                        if(preg_match('#^,#', $match[0])) return ',';       // В остальных случаях
-                        else return '';                                     // Если это первая запись в БД
+                        if($match[0] == ',' . $this->uInfo['id'] . ',') return ',';       	// В остальных случаях
+                        else return '';                                     			// Если это первая запись в БД
                     }, $this->pInfo['voters']);
 
                 // Изменение в users
@@ -114,11 +117,13 @@ class Application extends AjaxModel {
                 $articlesData['voters'] = $this->pInfo['voters'];         // Количество прголосовавших - без изменений
 
                 // Изменение в users
+		    
+		$rating = $this->pInfo['id'] . '-' . $_POST['vote'];
 
                 $userData['vote'] = preg_replace_callback($search, 
-                    function($match) {
-                        if(preg_match('#^,#', $match[0])) return $value = ',' . $this->pInfo['id'] . '-' . $_POST['vote'];
-                        else return $value = $this->pInfo['id'] . '-' . $_POST['vote'] . ',';
+                    function($match) use ($getVote, $rating) {
+                        if($match[0] == (',' . $this->pInfo['id'] . '-' . $getVote[1])) return $replace = ',' . $rating;
+                        else return $replace = $rating . ',';
                     }, $this->uInfo['vote']);
 
                 $show = $articlesData['rating'] . '+' . $_POST['vote'];      // Данные вида: рейтинг-проголосовавших+ваша оценка
@@ -138,13 +143,13 @@ class Application extends AjaxModel {
             if($this->uInfo['vote'] == '') $userData['vote'] = $this->pInfo['id'] . '-' . $_POST['vote'] . ',';
             else $userData['vote'] = $this->uInfo['vote'] . $this->pInfo['id'] . '-' . $_POST['vote'] . ',';
 
-            $show = $articlesData['rating'] . '+' . $_POST['vote'];      // Данные вида: рейтинг-проголосовавших+ваша оценка
+            $show = $articlesData['rating'] . '+' . $_POST['vote'];        // Данные вида: рейтинг-проголосовавших+ваша оценка
         }
 
         // Внесение данных в articles
 
         $articlesData['name'] = explode('/', $_POST['URI'])[4];            // Имя владельца каталога с изображениями
-        $articlesData['postId'] = explode('/', $_POST['URI'])[6];     // Имя папки поста, совпадающее с id поста, хранящегося в БД
+        $articlesData['postId'] = explode('/', $_POST['URI'])[6];          // Имя папки поста, совпадающее с id поста, хранящегося в БД
 
         $updateArticles = $this->connection->prepare("UPDATE `articles` SET rating=:rating, voters=:voters WHERE name = :name and postId = :postId");
         $updateArticles->execute($articlesData);
@@ -165,8 +170,5 @@ $object = new Application;
 
 // Метод вызывается после создания дескриптора подключения к БД, хранящегося в свойстве $connection.
 
-if($_POST['buttonStatus'] != '') {
-    $method = $_POST['buttonStatus'];
-    $this->$method();
-}
+if($_POST['method'] != '') $this->checkVoter();
         
