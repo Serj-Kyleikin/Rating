@@ -165,9 +165,8 @@ class Application extends AjaxModel {
     }
 }
 
-$object = new Application;
-
 // Метод вызывается после создания дескриптора подключения к БД, хранящегося в свойстве $connection.
 
-if($_POST['method'] != '') $this->checkVoter();
+$object = new Application;
+if($_POST['method'] != '') $object->checkVoter();
         
