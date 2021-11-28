@@ -53,7 +53,6 @@ class Application extends AjaxModel {
 
 	public function showRating() {
 
-        $data = 'DB';
         $this->getPostInfo();             // Запрос рейтинга поста
 
         // Если это авторизованный пользователь, то показ его оценок
