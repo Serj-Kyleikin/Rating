@@ -121,7 +121,7 @@ class Application extends AjaxModel {
 
                 $userData['vote'] = preg_replace_callback($search, 
                     function($match) use ($getVote, $rating) {
-                        if($match[0] == (',' . $this->pInfo['id'] . '-' . $getVote[1])) return $replace = ',' . $rating;
+                        if($match[0] == ',' . $this->pInfo['id'] . '-' . $getVote[1]) return $replace = ',' . $rating;
                         else return $replace = $rating . ',';
                     }, $this->uInfo['vote']);
 
