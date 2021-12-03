@@ -69,8 +69,7 @@ class Application extends AjaxModel {
 
             if(preg_match($search, $this->uInfo['vote'], $match)) $data = explode('-', $match[0])[1];
         }
-
-        echo $this->pInfo['rating'] . '+' . $data;
+       	    echo $this->pInfo['rating'] . '+' . $data;
 	}
 
     // Внесение изменение в БД.
