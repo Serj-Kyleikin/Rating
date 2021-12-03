@@ -67,9 +67,9 @@ class Application extends AjaxModel {
 
             // Поиск postId среди коллекции постов, за которые пользователь уже голосовал
 
-            if(preg_match($search, $this->uInfo['vote'], $match)) $data = explode('-', $match[0])[1];
+            if(preg_match($search, $this->uInfo['vote'], $match)) $userVote = explode('-', $match[0])[1];	// Если найден postId, получаем оценку пользователя этому посту
         }
-       	    echo $this->pInfo['rating'] . '+' . $data;
+       	    echo $this->pInfo['rating'] . '+' . $userVote;
 	}
 
     // Внесение изменение в БД.
