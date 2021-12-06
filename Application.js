@@ -1,10 +1,10 @@
 $(document).ready(function() {
 
-	var formData = new FormData();               // Объект FormData для ajax
-    var AjaxController = '/application/controllers/AjaxController.php';
+    	var formData = new FormData();
+    	var AjaxController = '/application/controllers/AjaxController.php';
 
-	let url = document.location.href;
-	formData.append('url', url);
+    	let url = document.location.href;
+    	formData.append('url', url);
 
 /*************************** Рейтинг ***************************/
 
@@ -31,22 +31,22 @@ $(document).ready(function() {
 
 			$.ajax({
 
-                type: 'POST',
-                url: AjaxController,
-                processData: false,
-                contentType: false,
-                cache: false,
-                dataType: 'text',
-                data: formData,
+				type: 'POST',
+				url: AjaxController,
+				processData: false,
+				contentType: false,
+				cache: false,
+				dataType: 'text',
+				data: formData,
 
-                success: function(data){
+				success: function(data) {
 
-                    formData.delete('URI');
-                    formData.delete('buttonStatus');
+				    formData.delete('URI');
+				    formData.delete('buttonStatus');
 
-                    showRatingMethod(target, data);
-			    }
-            });
+				    showRatingMethod(target, data);
+				}
+			});
 		}
 	}
 
@@ -56,10 +56,10 @@ $(document).ready(function() {
 
 	function showRatingMethod(target, rating) {
 
-        let block = target.parentNode.parentNode;
+		let block = target.parentNode.parentNode;
 
-        let Rating = rating.split('+')[0];
-        let Status = rating.split('+')[1];
+		let Rating = rating.split('+')[0];
+		let Status = rating.split('+')[1];
 
 		// Получение ширины дефолтного блока
 
@@ -70,9 +70,9 @@ $(document).ready(function() {
 
 		let Values = Rating.split('-');
 		let size = (Values[0] / Values[1])*starSize;
-        
-        let Vote = block.children[1];
-        Vote.setAttribute('class', 'ratingResult');
+
+		let Vote = block.children[1];
+		Vote.setAttribute('class', 'ratingResult');
 		Vote.style.width = size + 'px';
 
 		// Проголосовавшие
@@ -80,29 +80,29 @@ $(document).ready(function() {
 		let Voters = block.children[3];
 
 		if(Voters.querySelector('.showVoters')) Voters.querySelector('.showVoters').remove();
-        
-        let Div = document.createElement("div");
-        Voters.appendChild(Div);
 
-        Div.classList.add('showVoters');
+		let Div = document.createElement("div");
+		Voters.appendChild(Div);
+
+		Div.classList.add('showVoters');
 
 		let DivP = document.createElement("p");
 		DivP.insertAdjacentText('afterbegin', 'Проголосовавших: ' + Values[1]);
 		Div.appendChild(DivP);
 
-        if(Voters.querySelector('.showVote')) Voters.querySelector('.showVote').remove();
+		if(Voters.querySelector('.showVote')) Voters.querySelector('.showVote').remove();
 
-        if(Status.length == 1) {
+		if(Status.length == 1) {
 
-            let DivVoted = document.createElement("div");
-            Voters.appendChild(DivVoted);
+		    let DivVoted = document.createElement("div");
+		    Voters.appendChild(DivVoted);
 
-            DivVoted.classList.add('showVote');
+		    DivVoted.classList.add('showVote');
 
-            let DivVotedP = document.createElement("p");
-            DivVotedP.insertAdjacentText('afterbegin', 'Ваша оценка: ' + Status);
-            DivVoted.appendChild(DivVotedP);
-        }
+		    let DivVotedP = document.createElement("p");
+		    DivVotedP.insertAdjacentText('afterbegin', 'Ваша оценка: ' + Status);
+		    DivVoted.appendChild(DivVotedP);
+		}
 	}
 
 	// Контроль событий рейтинга
@@ -149,7 +149,7 @@ $(document).ready(function() {
 		}
 
 		target.onclick = function(event) {
-            if(event.target.className != 'vote') addVote(target, event.target);      // Добавление рейтинга
+            		if(event.target.className != 'vote') addVote(target, event.target);      // Добавление рейтинга
 		}
 	}
 
@@ -198,7 +198,7 @@ $(document).ready(function() {
 
     function showDescriptionMessage(target) {
 
-		if(target.parentNode.parentNode.querySelector('.showMessage')) return;
+	if(target.parentNode.parentNode.querySelector('.showMessage')) return;
         
         let voters = target.parentNode.parentNode.querySelector('.voters');
         
@@ -208,15 +208,15 @@ $(document).ready(function() {
         Div.classList.add('showMessage');
 
         let DivP = document.createElement("p");
-		DivP.insertAdjacentText('beforeend', 'Только для зарегистрированных пользователей!');
-		Div.appendChild(DivP);
+	DivP.insertAdjacentText('beforeend', 'Только для зарегистрированных пользователей!');
+	Div.appendChild(DivP);
         
         let DivA = document.createElement("a");
         DivA.insertAdjacentText('beforeend', 'Зарегистрироваться');  
         Div.appendChild(DivA);
         
         let DivAhref = document.createAttribute("href");
-		DivAhref.value = "/registration";
-		DivA.setAttributeNode(DivAhref);
+	DivAhref.value = "/registration";
+	DivA.setAttributeNode(DivAhref);
     }
 })
