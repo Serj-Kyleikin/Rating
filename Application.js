@@ -122,7 +122,7 @@ $(document).ready(function() {
 			if(vote.getAttribute('class') != 'vote') {
 
 				if(next) voteClass = next.getAttribute('class');			 // Получение класса звезды
-				else voteClass = 'end';								         // Если это не пятая звезда
+				else voteClass = 'end';							 // Если это не пятая звезда
 
 				// Вычисление конкретной звезды
 
