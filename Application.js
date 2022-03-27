@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
     	var formData = new FormData();
-    	var AjaxController = '/application/controllers/AjaxController.php';
+    	var AjaxController = 'AjaxController.php';
 
     	let url = document.location.href;
     	formData.append('url', url);
