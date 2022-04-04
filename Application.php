@@ -1,6 +1,9 @@
 <?php
 
-class Application extends AjaxModel {
+use Model;
+use PDO;
+
+class Application extends Model {
     
     protected $uInfo;
     protected $pInfo;
@@ -163,9 +166,3 @@ class Application extends AjaxModel {
         echo $show;                     // Показ обновлённых дагнных рейтинга
     }
 }
-
-// Метод вызывается после создания дескриптора подключения к БД, хранящегося в свойстве $connection.
-
-$object = new Application;
-if($_POST['method'] != '') $object->checkVoter();
-        
