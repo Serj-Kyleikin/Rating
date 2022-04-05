@@ -163,6 +163,6 @@ class Application extends Model {
         
         $addNewVote->execute($userData);
 
-        echo $show;                     // Показ обновлённых дагнных рейтинга
+        echo $show;                     // Показ обновлённых данных рейтинга
     }
 }
