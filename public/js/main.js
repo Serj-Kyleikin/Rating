@@ -64,7 +64,8 @@ async function addRating(target, vote) {
 
         let codes = {
             0: 'Проголосовать могут только зарегистрированные пользователи!',
-            1: 'Вы уже проголосовали!'
+            1: 'Вы уже проголосовали!',
+            2: 'Ошибка сервиса, попробуйте позже!'
         };
 
         let DIV = createEl(target.parentElement, 'div', 'showMessage', codes[data]);
