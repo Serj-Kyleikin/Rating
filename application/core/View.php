@@ -41,7 +41,7 @@ class View {
 
         // Подготовка стилей для загрузки в каркасе
 
-        $this->styles[] = $stylePath . $info['path'] . '.css';
+        $this->styles[] = $stylePath . $info['path'] . '.min.css';
 
         // Подготовка модулей страницы для загрузки в каркасе
 
