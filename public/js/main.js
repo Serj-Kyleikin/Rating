@@ -47,7 +47,7 @@ async function addRating(target, vote) {
 
     let data = await getLink.text();
 
-    if(!data.match(/^\d{1}$/)) {                                                    // Обновление рейтинга
+    if(!data.match(/^\d{1}:/)) {                                                    // Обновление рейтинга
 
         let new_rating = 160 / 5 * data.split('_')[0];
         let new_voters = data.split('_')[1];
@@ -62,14 +62,8 @@ async function addRating(target, vote) {
 
     } else if(!target.parentElement.querySelector('.showMessage')) {                // Сообщение
 
-        let codes = {
-            0: 'Проголосовать могут только зарегистрированные пользователи!',
-            1: 'Вы уже проголосовали!',
-            2: 'Ошибка сервиса, попробуйте позже!'
-        };
-
-        let DIV = createEl(target.parentElement, 'div', 'showMessage', codes[data]);
-        if(data == 0) createEl(DIV, 'a', '/registration', 'Зарегистрироваться');
+        let DIV = createEl(target.parentElement, 'div', 'showMessage', data.split(':')[1]);
+        if(data.split(':')[0] == 0) createEl(DIV, 'a', '/registration', 'Зарегистрироваться');
 
     } else return;                                                                  // Повтор сообщения
 }
