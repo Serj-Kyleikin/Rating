@@ -23,7 +23,7 @@ class MainModel extends Model {
             '2' => '2:Ошибка сервиса, попробуйте позже!'
         ];
 
-        if(strlen($_POST['vote']) == 1 and $_POST['vote'] <= 5) {               // Проверка на читерство
+        if(strlen($_POST['vote']) == 1 and $_POST['vote'] > 0 and $_POST['vote'] <= 5) {               // Проверка на читерство
 
             if(isset($_COOKIE['user'])) {
 
