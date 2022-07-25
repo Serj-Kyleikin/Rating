@@ -112,7 +112,7 @@ class MainModel extends Model {
 
             } else return 0;                // Неавторизованный пользователь
 
-            return $response;
+            return $response;               // Обновлённые данные рейтинга (оценка + проголосовавшие)
 
         } else return 2;                    // Зафиксирована попытка обмана
     }
