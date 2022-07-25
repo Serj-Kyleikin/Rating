@@ -71,14 +71,14 @@ class View {
 
         if($type == 'header') {
 
-            if(D_MODE) $this->check('стиля', $this->header, 'script');
+            if(C_MODE) $this->check('стиля', $this->header, 'script');
             echo "<link rel='stylesheet preload' href='/" . $this->header . "' as='style'/>";
             $this->header = null;
 
         } elseif($type == 'styles') {
 
             foreach($this->styles as $style) {
-                if(D_MODE) $this->check('стиля', $style, 'script');
+                if(C_MODE) $this->check('стиля', $style, 'script');
                 echo "<link rel='stylesheet' href='/" . $style . "'/>";
             }
 
@@ -94,7 +94,7 @@ class View {
 
             foreach($this->scripts as $key => $script) {
 
-                if(D_MODE) $this->check('скрипта', $script, 'insert');
+                if(C_MODE) $this->check('скрипта', $script, 'insert');
 
                 echo "link = document.createElement('SCRIPT');
                 link.id = 'js_$key'
