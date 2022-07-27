@@ -30,25 +30,33 @@ class MainModel extends Model {
         } catch(\PDOException $e) {
             logError($e, 1);
         }
+        
+        if($result['static']) {
 
-        // Поиск первой статьи из БД в выдаче
+            // Поиск первой статьи из БД в выдаче
 
-        try {
+            try {
 
-            $getId = $this->connection->prepare('SELECT id FROM articles ORDER BY id LIMIT 1');
-            $getId->execute();
-            $min = $getId->fetch(PDO::FETCH_ASSOC);
+                $getId = $this->connection->prepare('SELECT id FROM articles ORDER BY id LIMIT 1');
+                $getId->execute();
+                $min = $getId->fetch(PDO::FETCH_ASSOC);
 
-        } catch(\PDOException $e) {
-            logError($e, 1);
+            } catch(\PDOException $e) {
+                logError($e, 1);
+            }
+
+            foreach($result['static'] as $article) if($article['id'] == $min['id']) $result['pagination']['next'] = false;
+
+            // Подгрузка динамического контента
+
+            $result['dynamic']['options'] = $from;
+            $result['dynamic']['content'] = $this->getMainDynamic($from);
+
+        } else {
+
+            if(!$from) $result['pagination']['next'] = false;       // Нет записей для первой страницы в пагинации
+            else $result['static']['empty'] = true;                 // Отсутствуют данные для пагинации
         }
-
-        foreach($result['static'] as $article) if($article['id'] == $min['id']) $result['pagination']['next'] = false;
-
-        // Подгрузка динамического контента
-
-        $result['dynamic']['options'] = $from;
-        $result['dynamic']['content'] = $this->getMainDynamic($from);
 
         return $result;
     }
