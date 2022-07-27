@@ -7,7 +7,7 @@ for(let target of targets) {
 
     target.onmouseover = function(event) {
 
-        let vote = parseInt(event.target.getAttribute('data-vote'));
+        let vote = parseInt(event.target.dataset.vote);
         let stars = event.target.parentElement.children;
 
         if(!target.parentElement.querySelector('.user_vote')) {
@@ -38,7 +38,7 @@ async function addRating(target, vote) {
     formData.append('ajaxSettings', 'page:Main:addRating');
 
     formData.append('vote', vote);
-    formData.append('article_id', target.closest(".article").getAttribute('data-article'));
+    formData.append('article_id', target.closest(".article").dataset.article);
 
     let getLink = await fetch('/Ajax.php', {
         method: 'POST',
