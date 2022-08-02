@@ -14,11 +14,11 @@ $cabinet = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYEAQAAAAa7ikwAA
             <img width="24" height="24" alt="" src="<?=$main;?>"> Главная
         </a></li>
         <?php if(!isset($_COOKIE['user'])): ?>
-            <li><a href="authorization">
+            <li><a href="/authorization">
                 <img width="24" height="24" alt="" src="<?=$cabinet;?>">
                 <span>Авторизация</span>
             </a></li>
-            <li><a href="registration">
+            <li><a href="/registration">
                 <img width="24" height="24" alt="" src="<?=$cabinet;?>">
                 <span>Регистрация</span>
             </a></li>
