@@ -2,29 +2,57 @@
 
 async function getData(method) {
 
-    let info;
+    new Promise((resolve) => {
 
-    try {
-        let response = await fetch('https://json.geoiplookup.io/'); 
-        info = await response.json(); 
-    } catch(error) {
-        info = error.name;
+        let info = loadData("https://json.geoiplookup.io/", 5000);
+        if(info) resolve(info);
+
+    }).then((data) => { 
+        sent(data, method);
+    }).catch((error) => {
+        sent(error.name, method);
+    });
+}
+
+// Получение данных пользователя
+
+async function loadData(url, time) {
+
+    let controller = new AbortController();
+  
+    let timeoutId = setTimeout(() => {
+        controller.abort();
+    }, time);
+
+    let response = await fetch(url, {
+        signal: controller.signal,
+    });
+
+    if(response) {
+
+        clearTimeout(timeoutId);
+        return await response.json();
     }
+}
+
+async function sent(info, method) {
 
     // Формирование данных
 
     let formData = new FormData();
     formData.append('ajaxSettings', 'plugins:users:'+method);
-
     formData.append('info', JSON.stringify(info));
 
     let form = document.forms[0];
 
-    for(let i = 0; i < form.length; i++) {
-        if(form.elements[i].getAttribute('type') != 'submit') {
-            formData.append(form.elements[i].getAttribute('name'), form.elements[i].value);
-        }
+    if(method == 'registration') {
+
+        formData.append('name', form.elements.name.value);
+        formData.append('mail', form.elements.mail.value);
     }
+
+    formData.append('login', form.elements.login.value);
+    formData.append('password', form.elements.password.value);
 
     // Запрос на сервер
 
@@ -34,7 +62,6 @@ async function getData(method) {
     });
 
     let data = await sentAjax.text();
-    formData = null;
 
     // Проверка данных
 
@@ -52,11 +79,10 @@ function showError(data) {
         wrong_r_mail: 'Почта уже используется!'
     }
 
-    let error = document.querySelector('.wrong');
-    if(error) error.remove();
+    let status = data.split('_'), message, field,
+         error = document.querySelector('.wrong');
 
-    let status = data.split('_');
-    let message, field;
+    if(error) error.remove();
 
     if(status[0] == 'password') {
 
@@ -65,7 +91,7 @@ function showError(data) {
         message = 'Неверный пароль! Остал';
 
         if(status[1] != 'blocked') message += (status[1] == '2') ? 'ось 2 попытки' : 'ась 1 попытка';
-        else message = 'Следующая попытка через 1 час!'
+        else message = 'Следующая попытка через 1 час!';
 
     } else {
         field = document.getElementById(status[2]);
@@ -73,8 +99,8 @@ function showError(data) {
     }
 
     let DIV = document.createElement('div');
-    field.appendChild(DIV);
-    DIV.classList.add('wrong');
+    DIV.className = 'wrong';
+    field.append(DIV);
 
     DIV.textContent = message;
     field.children[1].value = '';

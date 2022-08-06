@@ -23,7 +23,7 @@ class MainModel extends Model {
             '2' => '2:Ошибка сервиса, попробуйте позже!'
         ];
 
-        if(strlen($_POST['vote']) == 1 and $_POST['vote'] > 0 and $_POST['vote'] <= 5) {               // Проверка на читерство
+        if(strlen($_POST['vote']) == 1 and $_POST['vote'] > 0 and $_POST['vote'] <= 5) {          // Проверка на читерство
 
             if(isset($_COOKIE['user'])) {
 
@@ -44,7 +44,7 @@ class MainModel extends Model {
 
                 if($info == null or $info['user_id'] == NULL) {                  // Не голосовал за этот пост ранее
 
-                    if($info['votes_articleID'] == $_POST['article_id']) {       // Обновление рейтинга
+                    if(isset($info['votes_articleID'])) {                       // Обновление рейтинга
 
                         $vote['article_id'] = $id['article_id'];
                         $vote['voters'] = (int)$info['voters'] + 1;

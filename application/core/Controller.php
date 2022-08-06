@@ -36,8 +36,6 @@ class Controller {
 
         // Получение данных модели
 
-        $info['method'] = 'get' . ucfirst($info['path']);
-
         if(method_exists($this->model, $info['method'])) {
 
             if(isset($info['plugin'])) {
@@ -54,16 +52,18 @@ class Controller {
 
             } else $data = $this->model->getData($info);
 
-            if(isset($data['static']['empty'])) redirect(true);   // При отсутствии данных для пагинации и иных параметров URL
+            if(!isset($data['empty'])) {
 
-            // Запуск рендеринга
+                // Запуск рендеринга
 
-            $view = new View;
-            $view->rendering($info, $data);                     // Запуск сборки страницы
+                $view = new View;
+                $view->rendering($info, $data);                // Запуск сборки страницы
 
-            $this->errors = $this->resourse_dirs = $this->model = null;
+                $this->errors = $this->resourse_dirs = $this->model = null;
 
-        } else redirect(true);                                  // Страницы не существует
+            } else redirect(true);   // При отсутствии данных для пагинации и иных параметров URL
+
+        } else redirect(true);                                // Страницы не существует
     }
 
     // Проверка файлов и классов. Создание модели.

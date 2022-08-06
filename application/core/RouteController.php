@@ -7,6 +7,7 @@ class RouteController {
     public $controller = '\application\core\Controller';    // Базовый контроллер
     public $settings;                                       // Настройки плагинов
     public $info = [];                                      // Параметры
+    public $pagination = [];                                // Пагинация
     public $errors = [                                      // Коды ошибок
         '0' => 'отсутствует файл настроек плагинов: ',
         '1' => 'Некорректно заполнены настройки плагина: ',
@@ -22,28 +23,39 @@ class RouteController {
 
         // Определение пути, проверка пагинации и плагинов
 
-        if($this->createPath($this->info['url']) != 'main' and P_MODE and $this->getSettings()) $this->checkPlugin($this->info['url']);
+        if($this->createInfo($this->info['url']) != 'main' and P_MODE and $this->getSettings()) $this->checkPlugin($this->info['url']);
+
+        $this->pagination();
 
         new $this->controller($this->info);                   // Запуск конструктора базового контроллера
 
-        $this->settings = $this->controller = $this->info = $this->errors = null;
+        $this->settings = $this->controller = $this->info = $this->pagination = $this->errors = null;
     }
 
     // Определение пути и проверка пагинации
 
-    public function createPath($url) {
+    public function createInfo($url) {
 
         $last = $url[count($url) - 1];
+        $address = $url;
 
         if(preg_match('/^[\d]+$/', $last)) {
 
-            $this->info['pagination'] = $last;
+            $address[count($address) - 1] = '';
+            $this->pagination['this'] = $last;
+            $method = ($url['0'] == $last) ? 'main' : $url[count($url) - 2];
 
-            if($url['0'] == $last) return $this->info['path'] = 'main';
+        } else {
 
-        } else $this->info['pagination'] = 1;
+            $address[] = '';
+            $this->pagination['this'] = 1;
+            $method = ($url['0'] == '') ? 'main' : $last;
+        }
 
-        return $this->info['path'] = ($url['0'] == '') ? 'main' : $url['0'];
+        $this->info['method'] = 'get' . ucfirst($method);
+        $this->pagination['address'] = implode('/', $address);
+
+        return $this->info['path'] = ($method == 'main') ? 'main' : $url['0'];
     }
 
     // Получение настроек плагинов
@@ -106,5 +118,18 @@ class RouteController {
                 }
             }
         }
+    }
+
+    // Пагинация
+
+    public function pagination() {
+
+        $pagination = $this->pagination['this'];
+        $address = $this->pagination['address'];
+
+        $this->info['pagination']['this'] = $pagination;
+
+        $this->info['pagination']['previous'] = ($pagination == 1) ? false : $address . ($pagination - 1);
+        $this->info['pagination']['next'] = $address . ($pagination + 1);
     }
 }

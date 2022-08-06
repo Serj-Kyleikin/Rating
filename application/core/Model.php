@@ -17,7 +17,7 @@ class Model {
         '0' => 'Отсутствует файл подключения к БД: '
     ];
 
-    public $pagination = 3;
+    public $pagination = 2;
 
 	public function __construct($method = []) {
 
@@ -81,33 +81,41 @@ class Model {
 
     public function getData($info) {
 
-        $type = (isset($info['plugin'])) ? 'plugin_' : 'page_';
-        $cache_name = $type . $info['path'] . '_' . $info['pagination'] . '.tmp';
-
-        $data = $this->cache->read($cache_name);
-
         $method = $info['method'];
 
-        // Подгрузка динамичного контента
+        $type = (isset($info['plugin'])) ? 'plugin_' : 'page_';
+        $cache = $type . $info['path'] . '_' . $info['pagination']['this'] . '.tmp';
 
-        if(isset($data['dynamic']['options'])) {
-            $method .= 'Dynamic';
-            $data['dynamic']['content'] = $this->$method($data['dynamic']['options']);
-        }
+        $data = $this->cache->read($cache);
 
         // Кэширование статичного контента
 
         if(empty($data)) {
 
-            $content = $this->$method($info);
+            $data = $this->$method($info);
+            $data['settings'] = $this->getInfo($info);
 
-            $data['static'] = $cache['static'] = $content['static'];
-            $data['settings'] = $cache['settings'] = $this->getInfo($info);
+            if(!isset($data['empty'])) $this->cache->write($cache, $data);
 
-            if(isset($content['dynamic'])) $data['dynamic'] = $cache['dynamic'] = $content['dynamic'];
-            if(isset($content['pagination'])) $data['pagination'] = $cache['pagination']  = $content['pagination'];
+        } else {
 
-            $this->cache->write($cache_name, $cache);
+            // Подгрузка динамичного контента
+
+            if(isset($data['dynamic']['options'])) {
+                $method .= 'Dynamic';
+                $data['dynamic']['content'] = $this->$method($data['dynamic']['options']);
+            }
+
+            // Время отложенной загрузки для JS
+
+            if(!isset($data['settings']['performance'])) {
+
+                $data['settings']['performance'] = $data['settings']['icons']['count'];
+                unset($data['settings']['icons']['count']);
+
+                $data['settings']['performance'] += ceil(filesize($_SERVER['DOCUMENT_ROOT'] . '/cache/' . $cache) / 1000);
+                $this->cache->write($cache, $data);
+            }
         }
 
         return $data;
@@ -116,6 +124,8 @@ class Model {
     // Получение данных страницы (Общий метод всех моделей)
 
     public function getInfo($info, $advance = []) {
+
+        // Мета
 
         $component = (isset($info['plugin'])) ? 'plugins': 'pages';
 
@@ -139,11 +149,42 @@ class Model {
             $getInfo = $this->connection->prepare($sql);
             $getInfo->execute($data);
 
-            return $getInfo->fetch(PDO::FETCH_ASSOC);
+            $result['meta'] = $getInfo->fetch(PDO::FETCH_ASSOC);
 
         } catch(\PDOException $e) {
             logError($e, 1);
         }
+
+        // Иконки
+
+        $result['icons'] = $this->getIcons($info['path']);
+
+        return $result;
+    }
+
+    // Иконки(base64) страницы
+
+    public function getIcons($page) {
+
+        $temp = [];
+        $page = "':$page,'";
+
+        try {
+
+            $getIcons = $this->connection->prepare("SELECT type, name, image FROM icons WHERE type='general' or type='header' or page RLIKE $page ORDER BY type, page");
+            $getIcons->execute();
+
+            $result = $getIcons->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch(\PDOException $e) {
+            logError($e, 1);
+        }
+
+        foreach($result as $key => $icon) $temp[$icon['type']][$icon['name']] = $icon['image'];
+
+        $temp['count'] = count($result) * 10;    // Подсчёт времени для отложенной загрузки JS
+
+        return $temp;
     }
 
     // Проверка пользователя
@@ -176,18 +217,5 @@ class Model {
         $key = (int)$secret / 3;
 
         return substr($key, 2, -2);
-    }
-
-    // Параметры пагинации
-
-    public function setPagination($url, $pagination) {
-
-        $url[count($url) - 1] = '';
-        $url = implode('/', $url);
-
-        $result['previous'] = ($pagination == 1) ? false : $url . ($pagination - 1);
-        $result['next'] = $url . ($pagination + 1);
-
-        return $result;
     }
 }

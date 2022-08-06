@@ -9,6 +9,9 @@ class View {
     public $styles = [];
     public $header = 'public/css/partials/header.min.css';
     public $partials = [];
+    public $icons = [];
+    public $size = 0;
+    public $time = 0;
 
     // Подготовка компонентов, стилей и скриптов страницы
 
@@ -28,12 +31,16 @@ class View {
 
         // Подготовка данных страницы
 
-        foreach($data['settings'] as $key => $name) if($key != 'scripts') $this->settings[$key] = $name;
+        $this->icons = $data['settings']['icons'];
+
+        $this->time = (isset($data['settings']['performance'])) ? $data['settings']['performance'] : $data['settings']['icons']['count'];
+
+        foreach($data['settings']['meta'] as $key => $name) if($key != 'scripts') $this->settings[$key] = $name;
 
         // Подготовка скриптов JS для загрузки в каркасе
 
-        if($data['settings']['scripts'] != '') {
-            $scripts = explode(',', $data['settings']['scripts']);
+        if($data['settings']['meta']['scripts'] != '') {
+            $scripts = explode(',', $data['settings']['meta']['scripts']);
             foreach($scripts as $script) if($script != '') $this->scripts[] = $scriptPath  . $script;
         }
 
@@ -62,7 +69,7 @@ class View {
         if(D_MODE) $this->check('шаблона', $file);
         include_once $file;
 
-        $this->errors = $this->settings = $this->partial = $this->scripts = $this->styles = null;
+        $this->settings = $this->scripts = $this->styles = $this->header = $this->partials = $this->icons = $this->size = $this->time = null;
     }
 
     // Загрузка стилей CSS
@@ -72,17 +79,19 @@ class View {
         if($type == 'header') {
 
             if(C_MODE) $this->check('стиля', $this->header, 'script');
+            $this->size += filesize($this->header);
+
             echo "<link rel='stylesheet preload' href='/" . $this->header . "' as='style'/>";
-            $this->header = null;
 
         } elseif($type == 'styles') {
 
             foreach($this->styles as $style) {
+
                 if(C_MODE) $this->check('стиля', $style, 'script');
+                $this->size += filesize($style);
+
                 echo "<link rel='stylesheet' href='/" . $style . "'/>";
             }
-
-            $this->styles = null;
         }
     }
 
@@ -92,19 +101,16 @@ class View {
 
         if(isset($this->scripts[0])) {
 
-            foreach($this->scripts as $key => $script) {
+            foreach($this->scripts as $script) {
 
                 if(C_MODE) $this->check('скрипта', $script, 'insert');
 
                 echo "link = document.createElement('SCRIPT');
-                link.id = 'js_$key'
                 link.async = true
                 link.defer = true
-                link.src = '$script'
-                document.querySelector('.wrapper').insertAdjacentElement('afterend', link);" . PHP_EOL;
+                link.src = '/$script'
+                document.querySelector('.wrapper').append(link);" . PHP_EOL;
             }
-
-            $this->scripts = null;
         }
     }
 

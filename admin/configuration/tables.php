@@ -11,6 +11,13 @@ return [
             h1 NVARCHAR(100), 
             annotation NVARCHAR(100), 
             scripts VARCHAR(100)
+        );",
+        "CREATE TABLE IF NOT EXISTS icons (
+            type VARCHAR(20), 
+            page VARCHAR(50) NULL, 
+            name NVARCHAR(50), 
+            image TEXT, 
+            description VARCHAR(200) NULL
         );"
     ],
     'plugins' => [

@@ -1,6 +1,7 @@
 <?php
 
     $count = count($page[0]['static']);
+
     $previous = $page[0]['pagination']['previous'];
     $next = $page[0]['pagination']['next'];
 ?>
@@ -33,6 +34,6 @@
 </div>
 
 <div class="pagination">
-    <?php if(isset($previous) and $previous): echo "<a href='/" . $previous . "'>Назад</a>"; endif; ?>
-    <?php if(isset($next) and $next): echo "<a href='/" . $next . "'>Вперёд</a>"; endif; ?>
+    <?php if(isset($previous) and $previous): echo "<a href='" . $previous . "'>Назад</a>"; endif; ?>
+    <?php if(isset($next) and $next): echo "<a href='" . $next . "'>Вперёд</a>"; endif; ?>
 </div>
