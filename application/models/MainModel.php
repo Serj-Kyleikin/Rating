@@ -54,7 +54,7 @@ class MainModel extends Model {
         } else {
 
             if(!$from) $result['pagination']['next'] = false;       // Нет записей для первой страницы в пагинации
-            else $result['static']['empty'] = true;                 // Отсутствуют данные для пагинации
+            else $result['empty'] = true;                           // Отсутствуют данные для пагинации
         }
 
         return $result;
