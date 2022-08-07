@@ -2,9 +2,23 @@
 
     $count = count($page[0]['static']);
 
+    $icons = $this->icons['page'];
     $previous = $page[0]['pagination']['previous'];
     $next = $page[0]['pagination']['next'];
 ?>
+
+<style>
+    .ratingDefault {
+        background-image: url('<?= $icons['silver']; ?>');
+    }
+    .ratingResult {
+        background-image: url('<?= $icons['gold']; ?>');
+        z-index: 5;
+    }
+    .choise {
+        background-image: url('<?= $icons['vote']; ?>');
+    }
+</style>
 
 <div class="articles">
 
